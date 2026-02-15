@@ -1,5 +1,7 @@
 from pathlib import Path
 from .conf import *
+from datetime import timedelta
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,8 +15,97 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # PROJECT APPS
     'apps.users',
-    'apps.blogs'
+    'apps.blogs',
+
+    # rest
+    'rest_framework'
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s - %(message)s",
+        },
+        "verbose": {
+            "format": "%(asctime)s | %(levelname)s | %(name)s | %(module)s | %(message)s",
+        },
+    },
+
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+        },
+
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "WARNING",
+            "formatter": "verbose",
+            "filename": os.path.join(BASE_DIR, "logs/app.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 3,
+        },
+
+        "debug_requests": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "verbose",
+            "filename": os.path.join(BASE_DIR, "logs/debug_requests.log"),
+            "filters": ["require_debug_true"],
+        },
+    },
+
+    "loggers": {
+
+        "users": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+
+        "blogs": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+
+        "django.request": {
+            "handlers": ["file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+
+        "django.server": {
+            "handlers": ["debug_requests"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -43,7 +134,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'hw1.wsgi.application'
+WSGI_APPLICATION = 'settings.wsgi.application'
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -69,5 +160,3 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'users.User'
-
-# noqa

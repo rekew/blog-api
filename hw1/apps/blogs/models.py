@@ -40,7 +40,7 @@ class Post(Model):
 
 
 class Comment(Model):
-    post = ForeignKey(Post, on_delete=CASCADE)
+    post = ForeignKey(Post, on_delete=CASCADE, related_name="comments")
     author = ForeignKey('users.User', on_delete=CASCADE)
     body = TextField()
     inserted_at = DateTimeField(auto_now_add=True)
