@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -7,10 +6,12 @@ from rest_framework import status
 from .serializers import PostSerializer, CommentSerializer
 from .models import Post
 from .permissions import IsAuthorOrReadOnly
+from django.core.cache import cache
 
 import logging
 
 logger = logging.getLogger('blogs')
+
 
 class PostViewSet(ModelViewSet):
 
@@ -19,11 +20,26 @@ class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def list(self, request, *args, **kwargs):
+        cache_key = "published_posts"
+
+        data = cache.get(cache_key)
+        if data:
+            return Response(data)
+
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        cache.set(cache_key, serializer.data, timeout=60)
+
+        return Response(serializer.data)
+
     def get_queryset(self):
         return Post.objects.filter(status="published")
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+        cache.delete("published_posts")
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update', 'destroy']:
@@ -50,8 +66,3 @@ class PostViewSet(ModelViewSet):
         serializer.save(author=request.user, post=post)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-=======
-from django.shortcuts import render
-
-# Create your views here.
->>>>>>> 006ac0f38acdf1843bb88b1b22489f0a4a6405c8
