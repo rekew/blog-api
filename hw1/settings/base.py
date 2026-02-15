@@ -1,7 +1,10 @@
 from pathlib import Path
 from .conf import *
+<<<<<<< HEAD
 from datetime import timedelta
 import os
+=======
+>>>>>>> 006ac0f38acdf1843bb88b1b22489f0a4a6405c8
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -160,3 +163,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'users.User'
+<<<<<<< HEAD
+=======
+
+# noqa
+>>>>>>> 006ac0f38acdf1843bb88b1b22489f0a4a6405c8

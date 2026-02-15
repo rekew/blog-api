@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -49,3 +50,8 @@ class PostViewSet(ModelViewSet):
         serializer.save(author=request.user, post=post)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> 006ac0f38acdf1843bb88b1b22489f0a4a6405c8
